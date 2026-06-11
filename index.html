@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamanna Assih | Program Director | Lamar Institute of Technology</title>
+    <style>
+        /* Base Setup & Color Palette (Deep Navy, Modern Teal, Clean Slate) */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2c3e50;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Canvas Container Box */
+        .window-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(15, 43, 70, 0.15);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Canvas Header Controls */
+        .window-header {
+            background-color: #0f2b46;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 4px solid #00a896;
+        }
+
+        .window-title {
+            color: #ffffff;
+            font-size: 11pt;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            opacity: 0.5;
+        }
+
+        /* Canvas Element styling */
+        canvas {
+            display: block;
+            background-color: #ffffff;
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+        }
+
+        /* Bottom Status Instruction Bar */
+        .status-bar {
+            background-color: #f8fafc;
+            padding: 12px 20px;
+            font-size: 9.5pt;
+            color: #718096;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="window-container">
+        <div class="window-header">
+            <div class="window-title">HTML5 Canvas Layout Viewport — Tamanna Assih Portfolio</div>
+            <div class="window-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <canvas id="portfolioCanvas" width="900" height="580"></canvas>
+
+        <div class="status-bar">
+            Interactive System: Move your mouse or click anywhere inside the canvas view above to access resources.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const canvas = document.getElementById('portfolioCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Interactive state coordinates tracking
+            let mouseX = 0;
+            let mouseY = 0;
+            let isHoveringLink = false;
+
+            // Link dimensions definition
+            const buttonX = 40;
+            const buttonY = 465;
+            const buttonWidth = 240;
+            const buttonHeight = 42;
+
+            function drawCanvas() {
+                // Clear Viewport
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 1. TOP HERO BANNER (Background Vector Graphic)
+                const headerGradient = ctx.createLinearGradient(0, 0, canvas.width, 140);
+                headerGradient.addColorStop(0, '#0f2b46');
+                headerGradient.addColorStop(1, '#1a4a75');
+                ctx.fillStyle = headerGradient;
+                ctx.fillRect(0, 0, canvas.width, 140);
+
+                // Accent Primary Boarder Rule
+                ctx.fillStyle = '#00a896';
+                ctx.fillRect(0, 135, canvas.width, 5);
+
+                // Header Typography Rendering
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 26px "Segoe UI", sans-serif';
+                ctx.fillText('Tamanna Assih', 40, 60);
+
+                ctx.fillStyle = '#00a896';
+                ctx.font = '600 14px "Segoe UI", sans-serif';
+                ctx.fillText('PROGRAM DIRECTOR', 40, 88);
+
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = '400 13px "Segoe UI", sans-serif';
+                ctx.fillText('Lamar Institute of Technology  •  Beaumont, Texas', 40, 112);
+
+
+                // 2. TIMED GREETING BANNER (Computed dynamic data)
+                const currentHour = new Date().getHours();
+                let greetingText = "Welcome to the professional portal of Tamanna Assih.";
+                if (currentHour < 12) greetingText = "Good morning! " + greetingText;
+                else if (currentHour < 18) greetingText = "Good afternoon! " + greetingText;
+                else greetingText = "Good evening! " + greetingText;
+
+                ctx.fillStyle = '#0f2b46';
+                ctx.fillRect(40, 165, 530, 36);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '500 12px "Segoe UI", sans-serif';
+                ctx.fillText(greetingText, 55, 187);
+
+
+                // 3. LEFT MAIN COLUMN TEXT & BODY PROFILE
+                // Profile Section
+                ctx.fillStyle = '#0f2b46';
+                ctx.fillRect(40, 225, 4, 20); // Accent Indicator Tag
+                
+                ctx.fillStyle = '#0f2b46';
+                ctx.font = 'bold 15px "Segoe UI", sans-serif';
+                ctx.fillText('PROFESSIONAL PROFILE', 52, 240);
+
+                ctx.fillStyle = '#4a5568';
+                ctx.font = '13px "Segoe UI", sans-serif';
+                
+                // Manually wrapped layout optimization strings
+                const lines = [
+                    "As Program Director at Lamar Institute of Technology, Tamanna Assih oversees strategic program execution,",
+                    "curriculum alignment, and student success initiatives. With a strong commitment to academic integrity and",
+                    "regional partnership coordination, she aligns technical instruction to the evolving Texas workforce."
+                ];
+                lines.forEach((line, index) => {
+                    ctx.fillText(line, 40, 275 + (index * 22));
+                });
+
+                // Leadership Focus Areas Subsections
+                ctx.fillStyle = '#00a896';
+                ctx.font = 'bold 11px "Segoe UI", sans-serif';
+                ctx.fillText('ACADEMIC EXCELLENCE', 40, 365);
+                ctx.fillStyle = '#1a4a75';
+                ctx.font = 'bold 14px "Segoe UI", sans-serif';
+                ctx.fillText('Curriculum Architecture & Workforce Readiness', 40, 385);
+                ctx.fillStyle = '#4a5568';
+                ctx.font = '13px "Segoe UI", sans-serif';
+                ctx.fillText('Designing modern course pathways blending theory with hands-on technical skill application.', 40, 407);
+
+
+                // 4. ACTION INTERACTIVE LINK CARD (hprs.html router element)
+                ctx.fillStyle = isHoveringLink ? '#f0fdfa' : '#f8fafc';
+                ctx.strokeStyle = '#b2dfdb';
+                ctx.lineWidth = 1;
+                ctx.fillRect(40, 440, 530, 95);
+                ctx.strokeRect(40, 440, 530, 95);
+
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = '500 12px "Segoe UI", sans-serif';
+                ctx.fillText('Explore comprehensive program guidelines, academic files and assets.', 60, 492);
+
+                // Button Render System
+                ctx.fillStyle = isHoveringLink ? '#008c7d' : '#00a896';
+                ctx.beginPath();
+                ctx.roundRect ? ctx.roundRect(buttonX, buttonY, buttonWidth, buttonHeight, 4) : ctx.rect(buttonX, buttonY, buttonWidth, buttonHeight);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px "Segoe UI", sans-serif';
+                ctx.fillText('Access HPRS Resources →', buttonX + 40, buttonY + 25);
+
+
+                // 5. RIGHT SIDEBAR ADMIN CARD PANEL
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                ctx.fillRect(600, 165, 260, 370);
+                ctx.strokeRect(600, 165, 260, 370);
+
+                // Sidebar Header
+                ctx.fillStyle = '#00a896';
+                ctx.fillRect(600, 165, 260, 4);
+                ctx.fillStyle = '#0f2b46';
+                ctx.font = 'bold 14px "Segoe UI", sans-serif';
+                ctx.fillText('ADMINISTRATION', 620, 195);
+
+                // Structured Meta Dictionary List Content
+                const administrationMeta = [
+                    { label: "Institution", value: "Lamar Institute of Technology" },
+                    { label: "Role", value: "Program Director" },
+                    { label: "Location", value: "Beaumont, Texas" },
+                    { label: "Regional State Alignment", value: "Texas State University System" }
+                ];
+
+                administrationMeta.forEach((item, index) => {
+                    const blockY = 225 + (index * 75);
+                    ctx.fillStyle = '#0f2b46';
+                    ctx.font = 'bold 11px "Segoe UI", sans-serif';
+                    ctx.fillText(item.label.toUpperCase(), 620, blockY);
+                    
+                    ctx.fillStyle = '#4a5568';
+                    ctx.font = '13px "Segoe UI", sans-serif';
+                    ctx.fillText(item.value, 620, blockY + 20);
+
+                    // Divider Lines
+                    if(index < administrationMeta.length - 1) {
+                        ctx.strokeStyle = '#e2e8f0';
+                        ctx.beginPath();
+                        ctx.moveTo(620, blockY + 42);
+                        ctx.lineTo(840, blockY + 42);
+                        ctx.stroke();
+                    }
+                });
+
+                // 6. VISUAL FOOTER RUN TIME
+                ctx.fillStyle = '#a0aec0';
+                ctx.font = '11px "Segoe UI", sans-serif';
+                ctx.fillText('© 2026 Tamanna Assih | Lamar Institute of Technology. Rendered inside active canvas element.', 40, 565);
+            }
+
+            // Event Listeners for Handling Canvas Interaction Physics
+            canvas.addEventListener('mousemove', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                // Scale coordinate translation matrix cleanly based on pixel resolution boundaries
+                mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                // Check boundary coordinates matching button constraints
+                const currentlyHovering = (mouseX >= buttonX && mouseX <= buttonX + buttonWidth && mouseY >= buttonY && mouseY <= buttonY + buttonHeight);
+                
+                if (currentlyHovering !== isHoveringLink) {
+                    isHoveringLink = currentlyHovering;
+                    canvas.style.cursor = isHoveringLink ? 'pointer' : 'default';
+                    drawCanvas(); // Trigger canvas layout frame redraw update
+                }
+            });
+
+            canvas.addEventListener('click', function() {
+                if (isHoveringLink) {
+                    console.log("Canvas Routing Event Triggered -> Navigating to hprs.html");
+                    window.location.href = 'hprs.html';
+                }
+            });
+
+            // Initial Layout Paint Configuration
+            drawCanvas();
+        });
+    </script>
+</body>
+</html>
