@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HIPAA Compliance Assessment - Student Portal</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            medical: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Print Rules for High-Quality PDF Output */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .print-card {
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        margin-bottom: 1.5rem !important;
+        padding: 1rem !important;
+      }
+      .print-title {
+        font-size: 20pt !important;
+        color: #0c4a6e !important;
+        border-bottom: 2px solid #0ea5e9 !important;
+        padding-bottom: 0.5rem;
+      }
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        border: 1px solid #cbd5e1 !important;
+        padding: 0.25rem 0.5rem !important;
+        background: none !important;
+      }
+    }
+    .print-only {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans transition-colors duration-300 min-h-screen flex flex-col dark:bg-slate-900 dark:text-slate-100">
+
+  <!-- Header Banner (no-print) -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 no-print dark:bg-slate-800 dark:border-slate-700">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-medical-100 text-medical-600 p-2 rounded-lg dark:bg-medical-900/50 dark:text-medical-500">
+          <!-- Medical Shield SVG -->
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-slate-900 dark:text-white">HIPAA Compliance Exam</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Target Audience: Healthcare & Clinical Rotation Students</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <!-- Dark Mode Toggle -->
+        <button id="themeToggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400" title="Toggle Dark Mode">
+          <svg id="themeDarkIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+          <svg id="themeLightIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" clip-rule="evenodd"></path></svg>
+        </button>
+        <!-- Print / PDF Config Trigger -->
+        <button onclick="openPrintModal()" class="flex items-center space-x-1 bg-medical-600 hover:bg-medical-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+          </svg>
+          <span>PDF / Print</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PDF / Printable Header (Visible only when printing) -->
+  <div class="print-only max-w-5xl mx-auto px-6 py-4 border-b-2 border-slate-300">
+    <div class="flex justify-between items-end">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900 print-title">HIPAA Compliance Standard Assessment</h1>
+        <p class="text-sm text-slate-500 mt-1">Target Setting: Academic Clinical Placements, Research, and Student Health</p>
+      </div>
+      <div class="text-right text-xs text-slate-500 space-y-1">
+        <p><strong>Student Name:</strong> ___________________________</p>
+        <p><strong>Date:</strong> ___________________________</p>
+        <p><strong>Class/Rotations Section:</strong> ________________</p>
+      </div>
+    </div>
+    <div id="printInstructions" class="mt-4 text-xs italic text-slate-600 bg-slate-50 p-3 rounded border border-slate-200">
+      Instructions: Read each question carefully. Select the single best answer for multiple-choice, complete the matching grids, supply the missing key term for the fill-in-the-blank, and respond thoroughly to the short scenario essay.
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 md:py-10">
+    
+    <!-- Info alert (no-print) -->
+    <div class="mb-8 p-4 bg-medical-50 border border-medical-200 rounded-xl flex items-start space-x-3 no-print dark:bg-slate-800 dark:border-medical-900/50">
+      <div class="text-medical-600 dark:text-medical-400 mt-0.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div class="text-sm text-slate-600 dark:text-slate-300">
+        <span class="font-semibold text-medical-900 dark:text-white">Academic Preparation Guard:</span> This test focuses specifically on scenarios college students encounter during internships, nursing/pre-med clinicals, and campus research studies. Complete the form to practice live grading and see explanations, or print a clean copy!
+      </div>
+    </div>
+
+    <!-- Live Progress and Score Summary (no-print) -->
+    <div id="quizStatusBar" class="mb-6 sticky top-[68px] z-30 bg-slate-50/90 backdrop-blur-md py-2 border-b border-slate-200 no-print dark:bg-slate-900/90 dark:border-slate-800">
+      <div class="flex items-center justify-between text-sm mb-1">
+        <span class="font-medium text-slate-600 dark:text-slate-300">Your Progress</span>
+        <span id="answeredCounter" class="text-medical-600 font-semibold dark:text-medical-400">0 of 10 answered</span>
+      </div>
+      <div class="w-full bg-slate-200 h-2.5 rounded-full dark:bg-slate-700">
+        <div id="answeredProgress" class="bg-medical-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Live Scoring Panel (Hidden until graded, no-print) -->
+    <div id="resultsPanel" class="hidden mb-8 p-6 bg-white border border-emerald-100 rounded-2xl shadow-sm text-center no-print dark:bg-slate-800 dark:border-emerald-950">
+      <div class="inline-flex items-center justify-center p-3 bg-emerald-50 text-emerald-600 rounded-full mb-3 dark:bg-emerald-950/50 dark:text-emerald-400">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Assessment Complete!</h2>
+      <div class="text-4xl font-extrabold text-medical-600 my-2 dark:text-medical-400">
+        <span id="scorePercentage">0</span>%
+      </div>
+      <p class="text-slate-600 dark:text-slate-300 max-w-md mx-auto mb-4" id="scoreFeedback">
+        Review your responses below to study detailed academic rationales for each option.
+      </p>
+      <div class="flex justify-center gap-3">
+        <button onclick="resetQuiz()" class="px-4 py-2 text-sm font-semibold border border-slate-300 rounded-lg hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-700">
+          Reset Exam
+        </button>
+        <button onclick="openPrintModal()" class="px-4 py-2 text-sm font-semibold bg-medical-600 hover:bg-medical-700 text-white rounded-lg transition">
+          Print Graded Copy
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Quiz Form -->
+    <form id="quizForm" onsubmit="event.preventDefault();" class="space-y-8">
+      
+      <!-- QUESTION 1: Multiple Choice (FERPA vs HIPAA) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="1">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">1</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Multiple Choice (FERPA vs HIPAA)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              A college student seeking mental health therapy visits the university’s Student Counseling Center. The counseling records are maintained securely by the university staff. Which federal law primarily governs the privacy of these medical treatment records?
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3 pl-10">
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q1" value="A" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Family Educational Rights and Privacy Act (FERPA), because they are considered "education records" or "treatment records" of the institution.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q1" value="B" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Health Insurance Portability and Accountability Act (HIPAA), because the counseling center is a professional clinical environment.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q1" value="C" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Freedom of Information Act (FOIA), which governs student access to standard public institutional data files.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q1" value="D" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">There is no governing federal regulation; student mental health data is strictly subject only to local state academic guidelines.</span>
+          </label>
+        </div>
+        <!-- Explanations block (Hidden initially, visible on submit or teacher print) -->
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Answer: A</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            <strong>Explanation:</strong> According to joint federal guidance, student health and medical records kept by a postsecondary institution are classified as "education records" or "treatment records" under FERPA, exempting them from the HIPAA Privacy Rule.
+          </p>
+        </div>
+      </div>
+
+      <!-- QUESTION 2: Multiple Choice (Access Rights) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="2">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">2</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Multiple Choice (Individual Rights)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              Under the HIPAA Privacy Rule, do individuals have a legal right to inspect, review, and receive copies of their own Protected Health Information (PHI)?
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3 pl-10">
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q2" value="A" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Yes; individuals have a broad right of access, and covered entities must provide access or copies within a maximum of 30 days of the request.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q2" value="B" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">No; patient files are the exclusive administrative property of the treating hospital and cannot be distributed to patients directly.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q2" value="C" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Yes; but a patient must submit a formal legal subpoena signed by an active attorney before records can be released to them.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q2" value="D" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Only if the primary care physician provides a certified written prescription approving the patient’s capacity to read their own charts.</span>
+          </label>
+        </div>
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Answer: A</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            <strong>Explanation:</strong> The right of access is a cornerstone of the HIPAA Privacy Rule. Patients are entitled to see and obtain copies of their health records within 30 days (with a single 30-day extension allowed under limited conditions).
+          </p>
+        </div>
+      </div>
+
+      <!-- QUESTION 3: Multiple Choice (De-Identification) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="3">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">3</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Multiple Choice (De-Identification)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              An intern at a clinical laboratory is preparing an academic poster presentation. Which of the following sets of data is successfully de-identified under HIPAA's "Safe Harbor" method and is therefore NOT considered PHI?
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3 pl-10">
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q3" value="A" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">A dataset containing the patient's medical diagnosis, initial of their last name, exact birthdate, and laboratory code.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q3" value="B" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">A series of clinical photographs showing patient symptoms where the eyes are covered with black bars but the rest of the facial features are visible.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q3" value="C" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">A structured list of clinical observations containing only randomized, unique record ID numbers, with the linkage key stored in a separate, encrypted server.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q3" value="D" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">A medical summary file containing the patient's three-digit ZIP code, treatment dates, and age calculated as 93 years old.</span>
+          </label>
+        </div>
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Answer: C</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            <strong>Explanation:</strong> To be de-identified under the Safe Harbor method, 18 specific identifiers (including names, full dates, geographic data smaller than state, ages over 89, and full-face photos) must be entirely removed. Storing a random ID where the link key is completely isolated is compliant.
+          </p>
+        </div>
+      </div>
+
+      <!-- QUESTION 4: Multiple Choice (Safe Disposal) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="4">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">4</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Multiple Choice (PHI Disposal)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              Which of the following describes a fully HIPAA-compliant practice for disposing of physical clinical patient lists in a hospital?
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3 pl-10">
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q4" value="A" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Throwing the patient lists into a designated clinical recycling bin located in the administrative hallway.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q4" value="B" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Tearing the paper files in half and placing them into a general black trash bin with non-clinical waste.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q4" value="C" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Depositing files into a locked console dedicated to secure cross-cut shredding, pulping, or incineration.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q4" value="D" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Stacking them on top of the nursing desk at the end of the shift for the clinic's standard cleaning crew to clear away.</span>
+          </label>
+        </div>
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Answer: C</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            <strong>Explanation:</strong> To safeguard patient privacy, physical documents with PHI must be destroyed using methods that render the text unreadable, indecipherable, and unable to be reconstructed (e.g., shredding or pulping). Standard open trash or recycling bins are active breach risks.
+          </p>
+        </div>
+      </div>
+
+      <!-- QUESTION 5: Multiple Choice (Minimum Necessary) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="5">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">5</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Multiple Choice (Minimum Necessary)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              A student completing a nursing rotation needs to check a patient's medical history to safely prepare for a morning clinical assignment. Applying the "Minimum Necessary" standard, what information is the student permitted to access?
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3 pl-10">
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q5" value="A" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">The entire historical electronic medical record, including historical dental records, old outpatient summaries, and family history.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q5" value="B" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Only the specific active treatment records, vital signs, and current clinical history necessary to perform the assigned daily nursing duties safely.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q5" value="C" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Any patient records within the hospital EHR system, to maximize comprehensive learning opportunities and clinical practice.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q5" value="D" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">No medical data at all; hospital policies strictly prohibit students from accessing clinical records under any learning circumstances.</span>
+          </label>
+        </div>
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Answer: B</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            <strong>Explanation:</strong> Under the Minimum Necessary Standard, clinical staff and interns must limit their viewing, request, and transmission of PHI to the minimum amount required to fulfill the operational task or educational clinical assignment.
+          </p>
+        </div>
+      </div>
+
+      <!-- QUESTION 6: Multiple Choice (Shadowing Case Study) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="6">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">6</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Multiple Choice (Academic Case Studies)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              A pre-med student shadowing an oncologist wants to use clinical details from a rare patient diagnosis to draft an academic case report. Under what conditions is a signed, written HIPAA Authorization required from the patient?
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3 pl-10">
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q6" value="A" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Authorization is never required if the student is presenting the paper solely inside a closed, private university classroom setting.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q6" value="B" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Authorization is required only if the case report retains identifiers (such as names, specific birthdates, or clear clinic names) that can link the report to the patient.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q6" value="C" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Authorization is always mandatory, regardless of how completely the clinical narrative and patient history are stripped of identifiers.</span>
+          </label>
+          <label class="flex items-start p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+            <input type="radio" name="q6" value="D" class="mt-1 text-medical-600 focus:ring-medical-500" onchange="trackProgress()">
+            <span class="ml-3 text-sm text-slate-700 dark:text-slate-300">Authorization is required only if the student plans to submit the report to a commercial, subscription-based medical journal.</span>
+          </label>
+        </div>
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Answer: B</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            <strong>Explanation:</strong> Under the HIPAA Privacy Rule, if an academic case study is fully de-identified (satisfying Safe Harbor rules) and does not present identifiable health details, patient authorization is not required. If identifiers are kept, patient permission is legally required.
+          </p>
+        </div>
+      </div>
+
+      <!-- QUESTION 7: Matching (Security Rule Safeguards) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="7">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">7</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Matching (HIPAA Security Rule)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              Match each HIPAA Security Rule safeguard category to its correct real-world administrative, physical, or technical action:
+            </h3>
+          </div>
+        </div>
+        
+        <div class="mt-6 space-y-4 pl-10">
+          <!-- Item A -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-slate-50 rounded-xl dark:bg-slate-900/50">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">A. Developing workplace privacy training, access protocols, and performing regular risk assessments.</span>
+            <select name="q7_A" class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-medical-500 focus:border-medical-500 p-2 shrink-0 w-full sm:w-56 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200" onchange="trackProgress()">
+              <option value="">Select safeguard...</option>
+              <option value="administrative">Administrative Safeguard</option>
+              <option value="physical">Physical Safeguard</option>
+              <option value="technical">Technical Safeguard</option>
+            </select>
+          </div>
+          <!-- Item B -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-slate-50 rounded-xl dark:bg-slate-900/50">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">B. Locking server room facility doors and placing privacy glare screens over nursing station monitors.</span>
+            <select name="q7_B" class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-medical-500 focus:border-medical-500 p-2 shrink-0 w-full sm:w-56 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200" onchange="trackProgress()">
+              <option value="">Select safeguard...</option>
+              <option value="administrative">Administrative Safeguard</option>
+              <option value="physical">Physical Safeguard</option>
+              <option value="technical">Technical Safeguard</option>
+            </select>
+          </div>
+          <!-- Item C -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-slate-50 rounded-xl dark:bg-slate-900/50">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">C. Setting up secure end-to-end data encryption, unique user ID logins, and automatic session logouts.</span>
+            <select name="q7_C" class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-medical-500 focus:border-medical-500 p-2 shrink-0 w-full sm:w-56 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200" onchange="trackProgress()">
+              <option value="">Select safeguard...</option>
+              <option value="administrative">Administrative Safeguard</option>
+              <option value="physical">Physical Safeguard</option>
+              <option value="technical">Technical Safeguard</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Matching Pairs:</p>
+          <ul class="mt-1 list-disc pl-5 text-slate-600 dark:text-slate-300 space-y-1">
+            <li><strong>A</strong> maps to <strong>Administrative Safeguard</strong></li>
+            <li><strong>B</strong> maps to <strong>Physical Safeguard</strong></li>
+            <li><strong>C</strong> maps to <strong>Technical Safeguard</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- QUESTION 8: Matching (Definitions) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="8">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">8</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Matching (HIPAA Regulatory Terms)</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              Match each key regulatory term to its legally correct definition:
+            </h3>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-4 pl-10">
+          <!-- Item A -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 bg-slate-50 rounded-xl dark:bg-slate-900/50">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">A. A healthcare provider, health plan, or health clearinghouse transmitting health information electronically.</span>
+            <select name="q8_A" class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-medical-500 focus:border-medical-500 p-2 shrink-0 w-full sm:w-56 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200" onchange="trackProgress()">
+              <option value="">Select term...</option>
+              <option value="ce">Covered Entity</option>
+              <option value="ba">Business Associate</option>
+              <option value="pr">HIPAA Privacy Rule</option>
+              <option value="br">Breach</option>
+            </select>
+          </div>
+          <!-- Item B -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 bg-slate-50 rounded-xl dark:bg-slate-900/50">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">B. A subcontractor or independent contractor who performs services involving PHI on behalf of a clinic or provider.</span>
+            <select name="q8_B" class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-medical-500 focus:border-medical-500 p-2 shrink-0 w-full sm:w-56 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200" onchange="trackProgress()">
+              <option value="">Select term...</option>
+              <option value="ce">Covered Entity</option>
+              <option value="ba">Business Associate</option>
+              <option value="pr">HIPAA Privacy Rule</option>
+              <option value="br">Breach</option>
+            </select>
+          </div>
+          <!-- Item C -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 bg-slate-50 rounded-xl dark:bg-slate-900/50">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">C. The specific federal regulation stating the strict legal conditions under which PHI may be used or disclosed.</span>
+            <select name="q8_C" class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-medical-500 focus:border-medical-500 p-2 shrink-0 w-full sm:w-56 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200" onchange="trackProgress()">
+              <option value="">Select term...</option>
+              <option value="ce">Covered Entity</option>
+              <option value="ba">Business Associate</option>
+              <option value="pr">HIPAA Privacy Rule</option>
+              <option value="br">Breach</option>
+            </select>
+          </div>
+          <!-- Item D -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 bg-slate-50 rounded-xl dark:bg-slate-900/50">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">D. An impermissible acquisition, access, use, or disclosure of PHI that compromises security or privacy.</span>
+            <select name="q8_D" class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-medical-500 focus:border-medical-500 p-2 shrink-0 w-full sm:w-56 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200" onchange="trackProgress()">
+              <option value="">Select term...</option>
+              <option value="ce">Covered Entity</option>
+              <option value="ba">Business Associate</option>
+              <option value="pr">HIPAA Privacy Rule</option>
+              <option value="br">Breach</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Matching Pairs:</p>
+          <ul class="mt-1 list-disc pl-5 text-slate-600 dark:text-slate-300 space-y-1">
+            <li><strong>A</strong> maps to <strong>Covered Entity</strong></li>
+            <li><strong>B</strong> maps to <strong>Business Associate</strong></li>
+            <li><strong>C</strong> maps to <strong>HIPAA Privacy Rule</strong></li>
+            <li><strong>D</strong> maps to <strong>Breach</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- QUESTION 9: Fill in the Blank -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="9">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">9</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Fill In The Blank</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              The acronym PHI in standard HIPAA compliance regulations stands for Protected <span class="border-b-2 border-slate-400 px-4 inline-block font-mono text-medical-600 print:text-black dark:text-medical-400">_______</span> Information.
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 pl-10">
+          <label class="block text-sm font-medium text-slate-500 mb-2 dark:text-slate-400 no-print">Type your answer below (case-insensitive):</label>
+          <input type="text" id="q9" class="max-w-xs w-full bg-white border border-slate-300 text-slate-900 rounded-lg p-2.5 focus:ring-2 focus:ring-medical-500 focus:outline-none dark:bg-slate-800 dark:border-slate-600 dark:text-white" placeholder="Type here..." oninput="trackProgress()">
+        </div>
+        <div class="explanation-box hidden mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Correct Answer: Health</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            <strong>Explanation:</strong> Under HIPAA, <strong>PHI</strong> is defined as <em>Protected Health Information</em>, which encompasses any individually identifiable health data created, stored, or transmitted by covered entities.
+          </p>
+        </div>
+      </div>
+
+      <!-- QUESTION 10: Short Essay -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 transition shadow-sm print-card dark:bg-slate-800 dark:border-slate-700" data-q="10">
+        <div class="flex items-start space-x-3">
+          <span class="bg-slate-100 text-slate-700 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shrink-0 dark:bg-slate-700 dark:text-slate-300">10</span>
+          <div class="space-y-1">
+            <span class="text-xs font-semibold uppercase tracking-wider text-medical-600 dark:text-medical-400">Clinical Scenario Case Study</span>
+            <h3 class="text-base md:text-lg font-semibold text-slate-900 dark:text-white">
+              You are completing a clinical placement at a busy hospital. During a lunch break in the public cafeteria with other students, you want to discuss a patient who was admitted with an unusual diagnosis. Explain how the HIPAA 'Minimum Necessary' standard and rules on patient confidentiality apply here. What precautions must you take to prevent a breach?
+            </h3>
+          </div>
+        </div>
+        <div class="mt-6 pl-10 space-y-4">
+          <textarea id="q10" rows="6" class="w-full bg-white border border-slate-300 text-slate-900 rounded-lg p-3 focus:ring-2 focus:ring-medical-500 focus:outline-none dark:bg-slate-800 dark:border-slate-600 dark:text-white no-print" placeholder="Write your professional analysis here..." oninput="trackProgress()"></textarea>
+          <div class="hidden print:block h-32 border-b border-slate-300 mt-2"></div>
+        </div>
+        <div class="explanation-box hidden mt-4 p-5 rounded-lg bg-slate-50 border border-slate-200 text-sm dark:bg-slate-900/50 dark:border-slate-700">
+          <p class="font-semibold text-emerald-600 dark:text-emerald-400">Model Grading Rubric:</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-300">
+            For full points, a student response must highlight:
+          </p>
+          <ul class="list-disc pl-5 mt-2 text-slate-600 dark:text-slate-300 space-y-1">
+            <li><strong>Public Setting Danger:</strong> Discussing clinical details in public cafeteria spaces, elevators, or corridors is an high-risk practice due to overhearing, representing an implicit breach.</li>
+            <li><strong>De-Identification:</strong> If case discussion is academically required, all 18 patient identifiers must be completely omitted from discussion.</li>
+            <li><strong>Minimum Necessary:</strong> Only share clinically relevant components essential to peer learning, omitting extraneous personal patient data.</li>
+            <li><strong>Safer Alternatives:</strong> Restricting detailed learning case dialogue to secure private classroom spaces or formal debrief clinics.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Submission Actions (no-print) -->
+      <div class="flex items-center justify-end gap-3 no-print">
+        <button type="button" onclick="resetQuiz()" class="px-5 py-2.5 text-sm font-semibold text-slate-600 border border-slate-300 rounded-xl hover:bg-slate-100 transition dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700">
+          Reset Answers
+        </button>
+        <button type="button" onclick="gradeQuiz()" class="px-6 py-2.5 bg-medical-600 hover:bg-medical-700 text-white font-semibold rounded-xl transition shadow-md">
+          Submit & Grade Quiz
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <!-- Interactive Modal Custom Notification (no-print) -->
+  <div id="customModal" class="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <div id="modalIconContainer" class="w-12 h-12 rounded-full flex items-center justify-center mb-4"></div>
+      <h3 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-white"></h3>
+      <p id="modalBody" class="text-sm text-slate-600 dark:text-slate-300 mt-2"></p>
+      <div class="mt-6 flex justify-end">
+        <button onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT CONFIGURATION MODAL (no-print) -->
+  <div id="printConfigModal" class="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <div class="flex items-center space-x-2 text-medical-600 mb-4 dark:text-medical-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+        </svg>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Print / Save PDF Config</h3>
+      </div>
+      <p class="text-xs text-slate-500 mb-4 dark:text-slate-400">Select which version you want to prepare for printing or exporting to a PDF file:</p>
+      
+      <div class="space-y-3">
+        <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-100 dark:bg-slate-900/50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+          <input type="radio" name="printOption" value="blank" checked class="mt-1 text-medical-600">
+          <div class="ml-3">
+            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 block">Student Exam Paper (Blank)</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 block">Prints a clean, empty test with spaces for Name, Date, and Class details. Hides rationales.</span>
+          </div>
+        </label>
+        <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-100 dark:bg-slate-900/50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+          <input type="radio" name="printOption" value="teacher" class="mt-1 text-medical-600">
+          <div class="ml-3">
+            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 block">Instructor Answer Key (Solved)</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 block">Highlights correct options and displays full analytical explanations for each question.</span>
+          </div>
+        </label>
+        <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-100 dark:bg-slate-900/50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+          <input type="radio" name="printOption" value="graded" class="mt-1 text-medical-600">
+          <div class="ml-3">
+            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 block">Your Graded Report</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 block">Prints your active input answers, marks incorrect responses, and shows your live score.</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button onclick="closePrintModal()" class="px-4 py-2 border border-slate-300 text-slate-600 text-sm font-semibold rounded-lg dark:border-slate-600 dark:text-slate-300">
+          Cancel
+        </button>
+        <button onclick="executePrint()" class="px-4 py-2 bg-medical-600 hover:bg-medical-700 text-white text-sm font-semibold rounded-lg">
+          Generate PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 no-print dark:bg-slate-800 dark:border-slate-700">
+    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1 dark:text-slate-400">
+      <p>© 2026 HIPAA Compliance Training Portal. All Rights Reserved.</p>
+      <p>This academic resource is built for college student preparation and does not constitute formal legal counsel.</p>
+    </div>
+  </footer>
+
+  <!-- Script logic -->
+  <script>
+    // Theme Toggle implementation
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      document.getElementById('themeLightIcon').classList.remove('hidden');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.getElementById('themeDarkIcon').classList.remove('hidden');
+    }
+
+    const themeToggleBtn = document.getElementById('themeToggle');
+    themeToggleBtn.addEventListener('click', function() {
+      document.getElementById('themeLightIcon').classList.toggle('hidden');
+      document.getElementById('themeDarkIcon').classList.toggle('hidden');
+      if (localStorage.getItem('color-theme')) {
+        if (localStorage.getItem('color-theme') === 'light') {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('color-theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('color-theme', 'light');
+        }
+      } else {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('color-theme', 'light');
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('color-theme', 'dark');
+        }
+      }
+    });
+
+    // Custom Alert Notification Modal
+    function showModal(title, body, type = 'info') {
+      const modal = document.getElementById('customModal');
+      const container = document.getElementById('modalIconContainer');
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').textContent = body;
+      
+      container.innerHTML = '';
+      if (type === 'error') {
+        container.className = "w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-600";
+        container.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+      } else {
+        container.className = "w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-medical-100 text-medical-600";
+        container.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('customModal').classList.add('hidden');
+    }
+
+    // Dynamic Quiz Tracker
+    function trackProgress() {
+      const q1 = document.querySelector('input[name="q1"]:checked');
+      const q2 = document.querySelector('input[name="q2"]:checked');
+      const q3 = document.querySelector('input[name="q3"]:checked');
+      const q4 = document.querySelector('input[name="q4"]:checked');
+      const q5 = document.querySelector('input[name="q5"]:checked');
+      const q6 = document.querySelector('input[name="q6"]:checked');
+      const q7A = document.querySelector('select[name="q7_A"]').value;
+      const q7B = document.querySelector('select[name="q7_B"]').value;
+      const q7C = document.querySelector('select[name="q7_C"]').value;
+      const q8A = document.querySelector('select[name="q8_A"]').value;
+      const q8B = document.querySelector('select[name="q8_B"]').value;
+      const q8C = document.querySelector('select[name="q8_C"]').value;
+      const q8D = document.querySelector('select[name="q8_D"]').value;
+      const q9 = document.getElementById('q9').value.trim();
+      const q10 = document.getElementById('q10').value.trim();
+
+      let count = 0;
+      if (q1) count++;
+      if (q2) count++;
+      if (q3) count++;
+      if (q4) count++;
+      if (q5) count++;
+      if (q6) count++;
+      if (q7A && q7B && q7C) count++;
+      if (q8A && q8B && q8C && q8D) count++;
+      if (q9 !== "") count++;
+      if (q10 !== "") count++;
+
+      document.getElementById('answeredCounter').textContent = `${count} of 10 answered`;
+      document.getElementById('answeredProgress').style.width = `${count * 10}%`;
+    }
+
+    // Interactive Grading Logic
+    function gradeQuiz() {
+      // Validate inputs
+      const q1 = document.querySelector('input[name="q1"]:checked');
+      const q2 = document.querySelector('input[name="q2"]:checked');
+      const q3 = document.querySelector('input[name="q3"]:checked');
+      const q4 = document.querySelector('input[name="q4"]:checked');
+      const q5 = document.querySelector('input[name="q5"]:checked');
+      const q6 = document.querySelector('input[name="q6"]:checked');
+      const q7A = document.querySelector('select[name="q7_A"]').value;
+      const q7B = document.querySelector('select[name="q7_B"]').value;
+      const q7C = document.querySelector('select[name="q7_C"]').value;
+      const q8A = document.querySelector('select[name="q8_A"]').value;
+      const q8B = document.querySelector('select[name="q8_B"]').value;
+      const q8C = document.querySelector('select[name="q8_C"]').value;
+      const q8D = document.querySelector('select[name="q8_D"]').value;
+      const q9 = document.getElementById('q9').value.trim().toLowerCase();
+
+      if (!q1 || !q2 || !q3 || !q4 || !q5 || !q6 || !q7A || !q7B || !q7C || !q8A || !q8B || !q8C || !q8D || q9 === "") {
+        showModal("Incomplete Assessment", "Please complete all multiple choice, matching blocks, and fill-in-the-blank questions prior to grading.", "error");
+        return;
+      }
+
+      let score = 0;
+      const totalPoints = 9; // Graded out of 9 (essay is self-evaluated)
+
+      // Q1 (Ans: A)
+      if (q1.value === 'A') score++;
+      // Q2 (Ans: A)
+      if (q2.value === 'A') score++;
+      // Q3 (Ans: C)
+      if (q3.value === 'C') score++;
+      // Q4 (Ans: C)
+      if (q4.value === 'C') score++;
+      // Q5 (Ans: B)
+      if (q5.value === 'B') score++;
+      // Q6 (Ans: B)
+      if (q6.value === 'B') score++;
+
+      // Q7 (Ans: A=administrative, B=physical, C=technical)
+      if (q7A === 'administrative' && q7B === 'physical' && q7C === 'technical') score++;
+
+      // Q8 (Ans: A=ce, B=ba, C=pr, D=br)
+      if (q8A === 'ce' && q8B === 'ba' && q8C === 'pr' && q8D === 'br') score++;
+
+      // Q9 (Ans: health)
+      if (q9 === 'health') score++;
+
+      const finalPercentage = Math.round((score / totalPoints) * 100);
+      document.getElementById('scorePercentage').textContent = finalPercentage;
+
+      // Reveal Explanations
+      const boxes = document.querySelectorAll('.explanation-box');
+      boxes.forEach(box => box.classList.remove('hidden'));
+
+      // Show Results Header
+      const resultsPanel = document.getElementById('resultsPanel');
+      resultsPanel.classList.remove('hidden');
+      window.scrollTo({ top: resultsPanel.offsetTop - 80, behavior: 'smooth' });
+    }
+
+    // Reset Quiz
+    function resetQuiz() {
+      document.getElementById('quizForm').reset();
+      const boxes = document.querySelectorAll('.explanation-box');
+      boxes.forEach(box => box.classList.add('hidden'));
+      document.getElementById('resultsPanel').classList.add('hidden');
+      trackProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Open/Close Print Configuration Panel
+    function openPrintModal() {
+      document.getElementById('printConfigModal').classList.remove('hidden');
+    }
+
+    function closePrintModal() {
+      document.getElementById('printConfigModal').classList.add('hidden');
+    }
+
+    // Execute Print Customization Action
+    function executePrint() {
+      const mode = document.querySelector('input[name="printOption"]:checked').value;
+      closePrintModal();
+
+      const boxes = document.querySelectorAll('.explanation-box');
+      const instructions = document.getElementById('printInstructions');
+
+      if (mode === 'blank') {
+        // Reset visually, hide rationales
+        boxes.forEach(box => box.classList.add('hidden'));
+        instructions.innerHTML = `<strong>Instructions:</strong> Read each question carefully. Select the single best answer for multiple-choice, complete the matching grids, supply the missing key term for the fill-in-the-blank, and respond thoroughly to the short scenario essay.`;
+      } else if (mode === 'teacher') {
+        // Force show rationales
+        boxes.forEach(box => box.classList.remove('hidden'));
+        instructions.innerHTML = `<strong>INSTRUCTOR ANSWER KEY & SOLVED RUBRIC</strong> - For Grading Use Only. All solutions, matching grids, and essay rubrics are fully revealed below.`;
+      } else if (mode === 'graded') {
+        // Keeps user answers and explanations if already graded
+        const hasGraded = !document.getElementById('resultsPanel').classList.contains('hidden');
+        if (!hasGraded) {
+          showModal("Grading Required", "Please click 'Submit & Grade Quiz' before selecting 'Your Graded Report' so the system has responses to generate.", "error");
+          return;
+        }
+        boxes.forEach(box => box.classList.remove('hidden'));
+        instructions.innerHTML = `<strong>STUDENT COMPLETED ASSESSMENT REPORT</strong> - Displays graded attempts, detailed incorrect choice explanations, and correct key values.`;
+      }
+
+      // Call system print
+      window.print();
+    }
+  </script>
+</body>
+</html>
