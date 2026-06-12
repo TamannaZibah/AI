@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WECM Course Prompt Generator | CC Instructor Suite</title>
+    <style>
+        /* Modern Design Tokens & CSS Variables for Dynamic Themes */
+        :root {
+            --bg-main: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-input: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+            --accent: #0d9488; /* Institutional Teal */
+            --accent-hover: #0f766e;
+            --accent-glow: rgba(13, 148, 136, 0.15);
+            --code-bg: #0f172a;
+            --code-text: #38bdf8;
+            --code-keyword: #f43f5e;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --accent: #2dd4bf; /* Vibrant Neo-Teal */
+            --accent-hover: #14b8a6;
+            --accent-glow: rgba(45, 212, 191, 0.2);
+            --code-bg: #020617;
+            --code-text: #38bdf8;
+            --code-keyword: #fb7185;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+        }
+
+        /* Basic Resets & Focus Ring Accessibility */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        /* Focus States for WCAG 2.1 Compliance */
+        button:focus-visible, 
+        input:focus-visible, 
+        select:focus-visible, 
+        textarea:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Workspace Grid and Layout */
+        .workspace-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Navigation Styles */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-card);
+            padding: 16px 28px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .header-left h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-left p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Modern Switch Styles for Theme and Form Selection */
+        .interactive-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--bg-input);
+            transition: var(--transition);
+        }
+
+        .btn-theme-toggle:hover {
+            border-color: var(--accent);
+            background-color: var(--bg-card);
+        }
+
+        /* Two Column Dynamic Form Workspace */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1.1fr 0.9fr;
+            }
+        }
+
+        /* Custom Panel Blocks */
+        .panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: var(--transition);
+        }
+
+        .panel-heading {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Structured Form Control Layouts */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .form-row.split {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-text, .select-control, .textarea-control {
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .input-text:focus, .select-control:focus, .textarea-control:focus {
+            border-color: var(--accent);
+            background-color: var(--bg-card);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .textarea-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Adaptive Selection Chips (Multiselect Options) */
+        .option-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .pill-checkbox {
+            display: none;
+        }
+
+        .pill-label {
+            display: inline-block;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .pill-checkbox:checked + .pill-label {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        /* CTA Primary Actions buttons */
+        .btn-generate {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn-generate:hover {
+            background-color: var(--accent-hover);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        /* Terminal Console Design for Generated Output */
+        .output-panel {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .terminal-block {
+            background-color: var(--code-bg);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .terminal-dot.r { background-color: #ef4444; }
+        .terminal-dot.y { background-color: #f59e0b; }
+        .terminal-dot.g { background-color: #10b981; }
+
+        .terminal-meta {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .pre-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .code-display {
+            font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+            font-size: 0.88rem;
+            color: #e2e8f0;
+            background: none;
+            border: none;
+            width: 100%;
+            height: 380px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+            padding-right: 8px;
+        }
+
+        /* Styled Action Button for Fast Copying */
+        .btn-copy {
+            background-color: #334155;
+            border: 1px solid #475569;
+            color: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-copy:hover {
+            background-color: #475569;
+            border-color: #64748b;
+        }
+
+        /* Interactive Notification Banner */
+        .toast-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #0f172a;
+            color: #f8fafc;
+            border-left: 4px solid #10b981;
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 9999;
+        }
+
+        .toast-notification.active {
+            transform: translateY(0);
+        }
+
+        /* SVG Layout Utility Shapes */
+        .svg-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="workspace-wrapper">
+        
+        <!-- App Title and Interface Bar -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>
+                    <svg class="svg-icon" viewBox="0 0 24 24">
+                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.47 12.5L3 11.16l9-4.91 9 4.91-2.47 1.34L12 9.24l-6.53 3.26zM12 18.25l-6.53-3.26-2.47 1.35 9 4.91 9-4.91-2.47-1.35L12 18.25z"/>
+                    </svg>
+                    WECM Lesson Prompt Generator
+                </h1>
+                <p>Designed for Higher Education Curriculum Alignment & Instructional Sourcing</p>
+            </div>
+            <div class="interactive-controls">
+                <button class="btn-theme-toggle" id="btnTheme" aria-label="Switch UI Theme">
+                    <svg class="svg-icon" viewBox="0 0 24 24">
+                        <path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.38 5.38 0 01-4.4 2.26 5.4 5.4 0 01-5.4-5.4 5.38 5.38 0 012.26-4.4c-.44-.06-.9-.1-1.36-.1z"/>
+                    </svg>
+                    <span>Toggle Theme</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Two Column Interactive System -->
+        <div class="workspace-grid">
+            
+            <!-- Left Config Board Panel -->
+            <section class="panel" aria-label="Course and Structure Parameters">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24" style="color: var(--accent);">
+                            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84a.48.48 0 00-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87a.49.49 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                        </svg>
+                        Instructional Parameters
+                    </div>
+                </div>
+
+                <!-- Input Config Form -->
+                <form id="generatorForm" onsubmit="event.preventDefault();">
+                    
+                    <div class="form-row split">
+                        <div class="form-group">
+                            <label for="courseName">WECM Course Title</label>
+                            <input type="text" id="courseName" class="input-text" value="Interpersonal Communication Skills">
+                        </div>
+                        <div class="form-group">
+                            <label for="semesterFormat">Syllabus Term Model</label>
+                            <select id="semesterFormat" class="select-control">
+                                <option value="8-Week Summer Session (Accelerated)">Summer Session (8-Week Accelerated)</option>
+                                <option value="16-Week Standard Academic Semester">Standard Semester (16-Week Full Term)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wecmOutcomes">Workforce Learning Outcomes (WECM)</label>
+                        <textarea id="wecmOutcomes" class="textarea-control" rows="4">1. Describe foundations, dynamics, barriers, and contexts of human interpersonal transactions.
+2. Formulate strategic self-awareness, active listening, and verbal/nonverbal feedback loops.
+3. Construct adaptive escalation-mitigation, repair, and collaborative conflict negotiation matrices in personal and organizational environments.</textarea>
+                    </div>
+
+                    <div class="form-row split">
+                        <div class="form-group">
+                            <label for="courseActivities">Diagnostic Core Activities</label>
+                            <textarea id="courseActivities" class="textarea-control" rows="3">Dyadic active-listening roleplay exercises, Communication block auto-ethnography journals, Peer assertion pattern assessments.</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="learningLabs">Interactive Learning Labs</label>
+                            <textarea id="learningLabs" class="textarea-control" rows="3">Lab 1: Emotion & Pitch Identification Lab (Decoding vocal cues).
+Lab 2: Simulated Mediation Sandbox (Escalation assessment and resolution tactics).</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="teamProjects">High-Impact Collaborative Projects</label>
+                        <textarea id="teamProjects" class="textarea-control" rows="2">Team Relational Repair Manual (Designing step-by-step negotiation and communicative repair pathways for standard workplace crises).</textarea>
+                    </div>
+
+                    <!-- UDL / ADA Compliance Checkboxes -->
+                    <div class="form-group">
+                        <label>ADA / UDL Verification Criteria</label>
+                        <div class="option-pills">
+                            <input type="checkbox" id="adaAlt" class="pill-checkbox" checked>
+                            <label for="adaAlt" class="pill-label">Alt-Text Descriptions</label>
+
+                            <input type="checkbox" id="adaTranscript" class="pill-checkbox" checked>
+                            <label for="adaTranscript" class="pill-label">Audio-to-Text Transcriptions</label>
+
+                            <input type="checkbox" id="adaContrast" class="pill-checkbox" checked>
+                            <label for="adaContrast" class="pill-label">Visual Color Contrast Ratios</label>
+
+                            <input type="checkbox" id="adaCognitive" class="pill-checkbox" checked>
+                            <label for="adaCognitive" class="pill-label">Low-Anxiety Scaffolding</label>
+                        </div>
+                    </div>
+
+                    <!-- Analogy Injection Controls -->
+                    <div class="form-group">
+                        <label>Inject Educational Analogies For:</label>
+                        <div class="option-pills">
+                            <input type="checkbox" id="analogyListening" class="pill-checkbox" checked>
+                            <label for="analogyListening" class="pill-label">Active Listening</label>
+
+                            <input type="checkbox" id="analogyNoise" class="pill-checkbox" checked>
+                            <label for="analogyNoise" class="pill-label">Physical/Semantic Noise</label>
+
+                            <input type="checkbox" id="analogyFeedback" class="pill-checkbox" checked>
+                            <label for="analogyFeedback" class="pill-label">Circular Transactional Feedback</label>
+
+                            <input type="checkbox" id="analogySelf" class="pill-checkbox" checked>
+                            <label for="analogySelf" class="pill-label">Johari Window Filters</label>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-generate" id="btnGenerate">
+                        <svg class="svg-icon" viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        Construct Payload Blueprint
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Terminal Prompt Output Panel -->
+            <section class="panel output-panel" aria-label="Prompt Output Panel">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24" style="color: var(--accent);">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                        </svg>
+                        Generated Engine Blueprint
+                    </div>
+                    <button class="btn-copy" id="btnCopy" aria-label="Copy prompt text to clipboard">
+                        <svg class="svg-icon" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        <span>Copy Output</span>
+                    </button>
+                </div>
+
+                <div class="terminal-block">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="terminal-dot r"></span>
+                            <span class="terminal-dot y"></span>
+                            <span class="terminal-dot g"></span>
+                        </div>
+                        <div class="terminal-meta" id="terminalMeta">STATE: WAITING_CONSTRUCTION</div>
+                    </div>
+                    <div class="pre-container">
+                        <pre class="code-display" id="outputCode" tabindex="0">Configure parameters on the left and click "Construct Payload Blueprint" to compile your customizable prompt engine.</pre>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification Overlay -->
+    <div class="toast-notification" id="toast">
+        <svg class="svg-icon" viewBox="0 0 24 24" style="color: #10b981;">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+        <span>Prompt code successfully copied to clipboard!</span>
+    </div>
+
+    <!-- Scripting for UI Physics and Dynamic String Concatenation -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnTheme = document.getElementById('btnTheme');
+            const btnGenerate = document.getElementById('btnGenerate');
+            const btnCopy = document.getElementById('btnCopy');
+            const outputCode = document.getElementById('outputCode');
+            const terminalMeta = document.getElementById('terminalMeta');
+            const toast = document.getElementById('toast');
+
+            // 1. Dynamic CSS Custom Theme System
+            btnTheme.addEventListener('click', function() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if(isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            });
+
+            // 2. High-Fidelity Prompt Concatenation Engine
+            btnGenerate.addEventListener('click', function() {
+                // Read fresh DOM variables
+                const course = document.getElementById('courseName').value.trim();
+                const semester = document.getElementById('semesterFormat').value;
+                const outcomes = document.getElementById('wecmOutcomes').value.trim();
+                const activities = document.getElementById('courseActivities').value.trim();
+                const labs = document.getElementById('learningLabs').value.trim();
+                const projects = document.getElementById('teamProjects').value.trim();
+
+                // Build checkboxes state arrays
+                let adaArray = [];
+                if (document.getElementById('adaAlt').checked) adaArray.push("Text descriptions (Alt text) for any visual elements/graphs.");
+                if (document.getElementById('adaTranscript').checked) adaArray.push("Explicit audio transcript templates and video caption structures.");
+                if (document.getElementById('adaContrast').checked) adaArray.push("Guidelines indicating color contrast recommendations for presentation files.");
+                if (document.getElementById('adaCognitive').checked) adaArray.push("Low-stress scaffolding with clean milestones to lower cognitive friction.");
+
+                let analogyArray = [];
+                if (document.getElementById('analogyListening').checked) analogyArray.push("Compare 'Active Listening' to the precision calibration of a radar system tuning out background clutter.");
+                if (document.getElementById('analogyNoise').checked) analogyArray.push("Compare 'Physical & Semantic Noise' to atmospheric interference disrupting a radio transmission.");
+                if (document.getElementById('analogyFeedback').checked) analogyArray.push("Compare 'Circular Transactional Feedback loops' to an electrical current flowing dynamically in a circuit.");
+                if (document.getElementById('analogySelf').checked) analogyArray.push("Compare 'Johari Window Filters' to windows with adjustable blinds that alter room illumination.");
+
+                // Assemble structural markdown output string
+                let template = `System Role Configuration:
+Act as an expert Instructional Designer with specialization in workforce curriculum development for community colleges, specifically matching Texas WECM (Workforce Education Course Manual) instructional models. 
+
+Your objective is to generate a comprehensive, highly structured, week-by-week modular lesson syllabus based on the input course configurations below.
+
+---
+
+[COURSE CRITERIA]
+- Course Title: ${course}
+- Term Format Model: ${semester}
+
+[WECM LEARNING OUTCOMES]
+The resulting instruction architecture must map back to and fulfill these specific outcomes:
+${outcomes}
+
+[PEDAGOGICAL COMPONENTS]
+You must integrate and design curriculum blocks utilizing these elements:
+- Key Core Activities: ${activities}
+- Experiential Learning Labs: ${labs}
+- Major Collaborative Team Deliverables: ${projects}
+
+---
+
+[INSTRUCTIONAL DESIGN REQUIREMENTS]
+
+1. Analogies Integration Strategy:
+To guarantee conceptual anchoring, make sure to integrate the following conceptual comparisons within the lesson modules:
+${analogyArray.map(a => `   * ${a}`).join('\n')}
+
+2. Strict Accessibility Compliance (ADA/UDL Alignment):
+To ensure all course components are universally accessible, embed these criteria in the weekly layout output:
+${adaArray.map(a => `   * ${a}`).join('\n')}
+
+---
+
+[REQUIRED PLAN OUTPUT BLUEPRINT]
+Generate the full lesson plan using this exact modular layout for each instructional block (week-by-week breakdown based on the chosen "${semester}" duration):
+
+## [Module Header]
+### I. Focused Learning Objectives
+- [Aligned explicitly to WECM Outcomes]
+
+### II. Interactive Lecture Delivery & Activities
+- [Step-by-step facilitation instructions for: "${activities}"]
+- [Analogy spotlight: Explain how to execute the relevant analogy during lecture]
+
+### III. Practical & Experiential Labs
+- [Direct lab protocol to implement: "${labs}"]
+
+### IV. Collaborative Team Project Progression
+- [Specific milestone instructions for: "${projects}"]
+
+### V. Accessibility/ADA Verification Specifications
+- [Explicit checks for screen reader accessibility, captioned videos, transcripts, and contrast guidelines]
+
+Ensure the output uses professional academic terminology, avoids shorthand/truncation, and is ready for direct LMS copy-paste importing.`;
+
+                // Render into display target
+                outputCode.textContent = template;
+                
+                // Update Console Log Metadata
+                terminalMeta.textContent = "STATE: Blueprints compiled successfully. Ready for use.";
+            });
+
+            // 3. Robust Clipboard Utility with Visual Indicator (ExecCommand Fallback)
+            btnCopy.addEventListener('click', function() {
+                // Focus and select target content
+                const textToCopy = outputCode.textContent;
+                
+                // Secondary check if empty warning state is active
+                if (textToCopy.startsWith("Configure parameters")) {
+                    terminalMeta.textContent = "STATE: Error. Build a blueprint before copying.";
+                    return;
+                }
+
+                // Fallback selection system for nested sandboxed structures
+                const tempTextArea = document.createElement("textarea");
+                tempTextArea.value = textToCopy;
+                tempTextArea.style.position = "absolute";
+                tempTextArea.style.left = "-9999px";
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    if(successful) {
+                        // Display visual success notice overlay
+                        toast.classList.add('active');
+                        setTimeout(() => {
+                            toast.classList.remove('active');
+                        }, 2800);
+                    }
+                } catch (err) {
+                    terminalMeta.textContent = "STATE: Copying blocked by browser security settings.";
+                }
+                
+                document.body.removeChild(tempTextArea);
+            });
+        });
+    </script>
+</body>
+</html>
